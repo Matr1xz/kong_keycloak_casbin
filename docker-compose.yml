@@ -11,6 +11,11 @@ services:
       - "5432:5432"
     volumes:
       - kong_db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U kong -d kong"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     networks:
       - cyberlabx-network
 
@@ -18,7 +23,8 @@ services:
     image: kong:3.6
     container_name: kong-migrations
     depends_on:
-      - kong-database
+      kong-database:
+        condition: service_healthy
     environment:
       KONG_DATABASE: postgres
       KONG_PG_HOST: kong-database
@@ -34,9 +40,12 @@ services:
     image: kong:3.6
     container_name: kong
     depends_on:
-      - kong-migrations
-      - keycloak
-      - casbin-authz
+      kong-migrations:
+        condition: service_completed_successfully
+      keycloak:
+        condition: service_healthy
+      casbin-authz:
+        condition: service_started
     environment:
       KONG_DATABASE: postgres
       KONG_PG_HOST: kong-database
@@ -71,6 +80,11 @@ services:
       POSTGRES_PASSWORD: Kc_Db@Secure#5537
     volumes:
       - keycloak_db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U keycloak -d keycloak"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     networks:
       - cyberlabx-network
 
@@ -78,7 +92,8 @@ services:
     image: quay.io/keycloak/keycloak:24.0
     container_name: keycloak
     depends_on:
-      - keycloak-database
+      keycloak-database:
+        condition: service_healthy
     environment:
       KC_DB: postgres
       KC_DB_URL: jdbc:postgresql://keycloak-database:5432/keycloak
@@ -88,10 +103,16 @@ services:
       KEYCLOAK_ADMIN_PASSWORD: KcAdm1n@CyberX#7743
       KC_HOSTNAME_STRICT: "false"
       KC_HTTP_ENABLED: "true"
-      KC_PROXY: edge
-    command: start-dev
+      KC_PROXY_HEADERS: xforwarded
+    command: start
     ports:
       - "8180:8080"   # Keycloak UI
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:8080/health/ready || exit 1"]
+      interval: 15s
+      timeout: 10s
+      retries: 10
+      start_period: 60s
     restart: unless-stopped
     networks:
       - cyberlabx-network
