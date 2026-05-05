@@ -1,7 +1,7 @@
 # Setup Keycloak realm, client, and users (PowerShell version)
 # Run this after Keycloak is fully started
 
-$KEYCLOAK_URL = "http://localhost:8080"
+$KEYCLOAK_URL = "http://localhost:8180"
 $ADMIN_USER = "kcadmin"
 $ADMIN_PASS = "KcAdm1n@CyberX#7743"
 
@@ -81,8 +81,8 @@ $clientData = @{
     implicitFlowEnabled = $false
     directAccessGrantsEnabled = $true
     serviceAccountsEnabled = $false
-    redirectUris = @("http://localhost:3000/*", "http://localhost:8080/*")
-    webOrigins = @("http://localhost:3000", "http://localhost:8080", "*")
+    redirectUris = @("http://localhost:3000/*", "http://localhost:8180/*")
+    webOrigins = @("http://localhost:3000", "http://localhost:8180", "*")
     protocol = "openid-connect"
     fullScopeAllowed = $true
     defaultClientScopes = @("openid", "profile", "email", "roles")

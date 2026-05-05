@@ -62,7 +62,7 @@ docker-compose ps
 | Kong Proxy           | http://localhost:18000       |
 | Kong Admin API       | http://localhost:18001       |
 | Kong Manager GUI     | http://localhost:18002       |
-| Keycloak Console     | http://localhost:8080/admin  |
+| Keycloak Console     | http://localhost:8180/admin  |
 | Casbin AuthZ API     | http://localhost:8082        |
 
 ## 🔑 Service Accounts
@@ -106,7 +106,7 @@ $body = @{
     grant_type = "password"
     client_id = "cyberlabx-web"
 }
-$response = Invoke-RestMethod -Uri "http://localhost:8080/realms/cyberlabx/protocol/openid-connect/token" `
+$response = Invoke-RestMethod -Uri "http://localhost:8180/realms/cyberlabx/protocol/openid-connect/token" `
     -Method POST -Body $body -ContentType "application/x-www-form-urlencoded"
 $TOKEN = $response.access_token
 ```

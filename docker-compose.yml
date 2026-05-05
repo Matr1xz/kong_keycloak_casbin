@@ -91,7 +91,7 @@ services:
       KC_PROXY: edge
     command: start-dev
     ports:
-      - "8080:8080"   # Keycloak UI
+      - "8180:8080"   # Keycloak UI
     restart: unless-stopped
     networks:
       - cyberlabx-network
@@ -119,7 +119,7 @@ services:
       - keycloak
       - kong
     environment:
-      KEYCLOAK_URL: http://localhost:8080
+      KEYCLOAK_URL: http://localhost:8180
       KEYCLOAK_REALM: cyberlabx
       KEYCLOAK_CLIENT_ID: cyberlabx-web
       KONG_URL: http://localhost:18000
